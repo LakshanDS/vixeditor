@@ -25,3 +25,5 @@ source/audio/**/*.{mp3,mp4}
 # Virtual environments
 .venv/
 venv/
+ca
+CatVideo.code-workspace
