@@ -1,0 +1,68 @@
+{
+  "video": {
+    "style": "random",
+    "exposure": 2, 
+    "brightness": 1,
+    "contrast": 1,
+    "saturation": 1,
+    "fade_in": 0,
+    "fade_out": 0,
+    "duration": 15,
+    "speed": 0.5,
+    "blur": 1
+  },
+  "audio": {
+    "audio": "random",
+    "volume": 1,
+    "fade_in": 2,
+    "fade_out": 2
+  },
+  "text_overlays": [
+    {
+      "text": "string",
+      "font": "Arial",
+      "font_size": 30,
+      "font_align": "center",
+      "font_color": "white",
+      "start_time": 0,
+      "end_time": 0,
+      "fade_in": 0,
+      "fade_out": 0,
+      "positionxy": ["center", "center"],
+      "margin": [100, 100, 100, 100]
+    },
+    {
+      "text": "string",
+      "font": "Arial",
+      "font_size": 30,
+      "font_align": "center",
+      "font_color": "white",
+      "start_time": 0,
+      "end_time": 0,
+      "fade_in": 0,
+      "fade_out": 0,
+      "positionxy": [540, 960, 700]
+    }
+  ],
+  "signature": {
+    "text": "string",
+    "font": "Arial",
+    "font_size": 30,
+    "font_align": "center",
+    "font_color": "white",
+    "start_time": 0,
+    "end_time": 0,
+    "fade_in": 0,
+    "fade_out": 0,
+    "positionxy": ["center", "center"],
+    "margin": [100, 100, 100, 100],
+    "opacity": 0.5
+  },
+  "logo": {
+    "name": "string.png",
+    "size": 150,
+    "positionxy": ["bottom", "center"],
+    "margin": [100, 100, 100, 100],
+    "opacity": 0.5
+  }
+}

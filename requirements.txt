@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+sqlalchemy
+python-dotenv
+opencv-python
+numpy
+pillow
+pydub
+python-multipart
+requests

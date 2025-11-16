@@ -1,0 +1,9 @@
+{
+  "California": [
+    { "start": 0, "end": 30 },
+    { "start": 53, "end": 145 }
+  ],
+  "another_video_style": [
+    { "start": 0, "end": 15 }
+  ]
+}

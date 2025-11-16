@@ -1,0 +1,27 @@
+# Environment
+.env
+
+# Caches
+cache/
+core/__pycache__/
+__pycache__/
+
+# Database
+database/*.db
+database/__pycache__/
+
+# Logs
+logs/
+
+# Outputs (all mp4s)
+outputs/*.mp4
+
+# Source video files
+source/videos/**/*.mp4
+
+# Source Audio files
+source/audio/**/*.{mp3,mp4}
+
+# Virtual environments
+.venv/
+venv/
