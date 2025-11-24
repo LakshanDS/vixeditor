@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Vix-Video-Editor](https://img.shields.io/badge/Vix-Video%20Editor-blue?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3.9+-green?style=for-the-badge&logo=python)
+![Python](https://img.shields.io/badge/Python-3.10+-green?style=for-the-badge&logo=python)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-teal?style=for-the-badge&logo=fastapi)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
@@ -67,12 +67,39 @@ Perfect for automated video content creation, marketing materials, social media 
 - Ubuntu 20.04+ (for production deployment)
 - Git
 
+### ⚡ One-Command Installation (Ubuntu)
+
+For production deployment on Ubuntu with automated setup:
+
+```bash
+wget https://raw.githubusercontent.com/LakshanDS/Vix-Video-Editor/main/install.sh
+chmod +x install.sh
+sudo ./install.sh
+```
+
+The installer will:
+
+- ✅ Ask for configuration (SSL, domain, ports, keys)
+- ✅ Install all dependencies
+- ✅ Setup Nginx with SSL (optional)
+- ✅ Configure services automatically
+- ✅ Start everything ready to use
+
+See [INSTALL.md](INSTALL.md) for details.
+
+---
+
+- Python 3.10 or higher
+- FFmpeg installed
+- Ubuntu 20.04+ (for production deployment)
+- Git
+
 ### Local Development Setup
 
 ```bash
 # Clone repository
-git clone https://github.com/LakshanDS/vixeditor.git
-cd vixeditor
+git clone https://github.com/LakshanDS/Vix-Video-Editor.git
+cd Vix-Video-Editor
 
 # Create virtual environment
 python3 -m venv venv
@@ -105,7 +132,7 @@ The API will be available at `http://localhost:8000`
 ## 📁 Project Structure
 
 ```
-vixeditor/
+Vix-Video-Editor/
 ├── api/                    # API routes and models
 │   ├── routers.py         # FastAPI endpoints
 │   ├── models.py          # Pydantic models
