@@ -62,6 +62,19 @@ def queue_worker():
             logger.exception("Error in queue_worker loop.")
         time.sleep(5)
 
+def cleanup_worker():
+    """ The background thread that periodically cleans up old output files. """
+    from core.cleanup import cleanup_old_files
+    
+    while True:
+        try:
+            cleanup_old_files(settings.OUTPUTS_DIR, settings.OUTPUT_RETENTION_HOURS)
+        except Exception:
+            logger.exception("Error in cleanup_worker loop.")
+        
+        # Sleep for the configured interval (convert minutes to seconds)
+        time.sleep(settings.CLEANUP_INTERVAL_MINUTES * 60)
+
 # ==============================================================================
 # FastAPI Application Setup
 # ==============================================================================
@@ -94,7 +107,11 @@ async def lifespan(app: FastAPI):
 
     queue_thread = threading.Thread(target=queue_worker, daemon=True)
     queue_thread.start()
-    logger.info("--- Database, Directories, and Queue Worker are Ready ---")
+    
+    cleanup_thread = threading.Thread(target=cleanup_worker, daemon=True)
+    cleanup_thread.start()
+    
+    logger.info("--- Database, Directories, Queue Worker, and Cleanup Worker are Ready ---")
     yield
     logger.info("--- Application Shutting Down ---")
 

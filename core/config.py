@@ -15,6 +15,10 @@ class Settings(BaseSettings):
 
     # --- Database ---
     DATABASE_URL: str = f"sqlite:///{BASE_DIR / 'catvideo.db'}"
+    
+    # --- Cleanup Settings ---
+    OUTPUT_RETENTION_HOURS: int = 24  # Delete output files older than this many hours
+    CLEANUP_INTERVAL_MINUTES: int = 60  # Run cleanup check every this many minutes
 
     # --- Directory Paths ---
     STYLES_DIR: Path = BASE_DIR / "source/videos/styles"
