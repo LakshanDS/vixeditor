@@ -7,6 +7,7 @@ import subprocess
 import logging
 import hmac
 import hashlib
+import threading
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, request, jsonify
@@ -64,10 +65,10 @@ def verify_signature(payload, signature, secret):
     # Simple token comparison (fallback)
     return hmac.compare_digest(signature, secret)
 
-def run_deployment():
-    """Execute the deployment script"""
+def run_deployment(deployment_id):
+    """Execute the deployment script in background"""
     try:
-        logger.info("Starting deployment script...")
+        logger.info(f"[{deployment_id}] Starting deployment script...")
         
         # Make script executable
         DEPLOY_SCRIPT.chmod(0o755)
@@ -82,18 +83,14 @@ def run_deployment():
         )
         
         if result.returncode == 0:
-            logger.info(f"Deployment succeeded:\n{result.stdout}")
-            return True, result.stdout
+            logger.info(f"[{deployment_id}] Deployment succeeded:\n{result.stdout}")
         else:
-            logger.error(f"Deployment failed:\n{result.stderr}")
-            return False, result.stderr
+            logger.error(f"[{deployment_id}] Deployment failed:\n{result.stderr}")
             
     except subprocess.TimeoutExpired:
-        logger.error("Deployment script timed out")
-        return False, "Deployment timed out after 5 minutes"
+        logger.error(f"[{deployment_id}] Deployment script timed out")
     except Exception as e:
-        logger.error(f"Deployment error: {e}")
-        return False, str(e)
+        logger.error(f"[{deployment_id}] Deployment error: {e}")
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -106,7 +103,7 @@ def health():
 
 @app.route('/deploy', methods=['POST'])
 def deploy():
-    """Main deployment webhook endpoint"""
+    """Main deployment webhook endpoint - responds immediately with 202"""
     
     # Get signature from headers (GitHub, GitLab, or custom)
     github_signature = request.headers.get('X-Hub-Signature-256')
@@ -126,37 +123,42 @@ def deploy():
             logger.warning(f"Deployment request rejected: Invalid signature from {request.remote_addr}")
             return jsonify({'error': 'Invalid signature'}), 401
     else:
-        logger.warning("WEBHOOK_SECRET not configured - accepting all requests!")
+        logger.warning("⚠️  WEBHOOK_SECRET not configured - accepting all requests!")
+    
+    # Generate deployment ID
+    deployment_id = datetime.now().strftime('%Y%m%d-%H%M%S')
     
     # Log the webhook trigger
-    logger.info(f"Deployment webhook triggered from {request.remote_addr}")
+    logger.info(f"[{deployment_id}] Webhook triggered from {request.remote_addr}")
     
     # Get payload info if available
+    repo_info = "unknown"
+    branch_info = "unknown"
     try:
         data = request.get_json() or {}
-        repo = data.get('repository', {}).get('full_name', 'unknown')
-        branch = data.get('ref', 'unknown').split('/')[-1]
-        logger.info(f"Repository: {repo}, Branch: {branch}")
+        repo_info = data.get('repository', {}).get('full_name', 'unknown')
+        branch_info = data.get('ref', 'unknown').split('/')[-1]
+        logger.info(f"[{deployment_id}] Repository: {repo_info}, Branch: {branch_info}")
     except:
         pass
     
-    # Run deployment in background
-    success, output = run_deployment()
+    # Run deployment in background thread (non-blocking)
+    thread = threading.Thread(
+        target=run_deployment,
+        args=(deployment_id,),
+        daemon=True
+    )
+    thread.start()
     
-    if success:
-        return jsonify({
-            'status': 'success',
-            'message': 'Deployment completed successfully',
-            'timestamp': datetime.now().isoformat(),
-            'output': output[-500:]  # Last 500 chars
-        }), 200
-    else:
-        return jsonify({
-            'status': 'failed',
-            'message': 'Deployment failed',
-            'timestamp': datetime.now().isoformat(),
-            'error': output[-500:]  # Last 500 chars
-        }), 500
+    # Return 202 immediately - webhook doesn't need to know the result
+    return jsonify({
+        'status': 'accepted',
+        'message': 'Deployment started in background',
+        'deployment_id': deployment_id,
+        'repository': repo_info,
+        'branch': branch_info,
+        'timestamp': datetime.now().isoformat()
+    }), 202
 
 @app.route('/logs', methods=['GET'])
 def get_logs():
@@ -176,11 +178,13 @@ def get_logs():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
+def main():
+    """Main entry point for production WSGI servers"""
     logger.info("=" * 60)
-    logger.info("VixEditor Deployment Webhook Service")
+    logger.info("VixEditor Deployment Webhook Service [PRODUCTION]")
     logger.info("=" * 60)
-    logger.info(f"Listening on port: {WEBHOOK_PORT}")
+    logger.info(f"Mode: Asynchronous (202 Accepted)")
+    logger.info(f"Port: {WEBHOOK_PORT}")
     logger.info(f"Deploy script: {DEPLOY_SCRIPT}")
     
     if WEBHOOK_SECRET == 'change-me-in-production':
@@ -190,10 +194,20 @@ if __name__ == '__main__':
         logger.info("✓ Webhook secret configured")
     
     logger.info("=" * 60)
+
+if __name__ == '__main__':
+    # This block is for local testing only
+    # In production, use: gunicorn -c gunicorn_config.py deploy_webhook:app
+    import sys
     
-    # Run Flask app
+    main()
+    
+    logger.warning("⚠️  Running with Flask development server")
+    logger.warning("⚠️  For production, use: gunicorn -c gunicorn_config.py deploy_webhook:app")
+    
     app.run(
         host='0.0.0.0',
         port=WEBHOOK_PORT,
-        debug=False
+        debug=False,
+        threaded=True
     )

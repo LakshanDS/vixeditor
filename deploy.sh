@@ -5,6 +5,9 @@
 # Automated deployment script for Ubuntu server
 ###############################################################################
 
+# Ensure full PATH for minimal environments (systemd / www-data)
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 set -e  # Exit on error
 
 # Configuration

@@ -4,16 +4,16 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
-WorkingDirectory=/path/to/CatVideo
-Environment="PATH=/path/to/CatVideo/venv/bin"
-ExecStart=/path/to/CatVideo/venv/bin/python main.py
+User=root
+WorkingDirectory=/home/ubuntu/vixeditor/
+Environment="PATH=/home/ubuntu/vixeditor/venv/bin"
+ExecStart=/home/ubuntu/vixeditor/venv/bin/python main.py
 Restart=always
 RestartSec=10
 
 # Logging
-StandardOutput=append:/path/to/CatVideo/logs/vixeditor.log
-StandardError=append:/path/to/CatVideo/logs/vixeditor-error.log
+StandardOutput=append:/home/ubuntu/vixeditor/logs/vixeditor.log
+StandardError=append:/home/ubuntu/vixeditor/logs/vixeditor-error.log
 
 [Install]
 WantedBy=multi-user.target

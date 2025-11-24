@@ -11,3 +11,4 @@ pydub
 python-multipart
 requests
 flask
+gunicorn
