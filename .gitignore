@@ -1,29 +1,70 @@
-# Environment
-.env
-
-# Caches
-cache/
-core/__pycache__/
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment Files (contain secrets)
+.env
+.env.deploy
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # Database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
 database/*.db
-database/__pycache__/
 
 # Logs
 logs/
+*.log
 
-# Outputs (all mp4s)
+# Cache
+cache/
+*.cache
+
+# Outputs (generated videos)
+outputs/
 outputs/*.mp4
 
-# Source video files
-source/videos/**/*.mp4
+# Source Files (large media files - must be added manually on server)
+source/
 
-# Source Audio files
-source/audio/**/*.{mp3,mp4}
+# Testing
+test_cleanup.py
+pytest_cache/
+.pytest_cache/
+*.cover
+.coverage
+htmlcov/
 
-# Virtual environments
-.venv/
-venv/
-ca
-CatVideo.code-workspace
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~

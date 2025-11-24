@@ -10,3 +10,4 @@ pillow
 pydub
 python-multipart
 requests
+flask

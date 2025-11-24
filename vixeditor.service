@@ -1,0 +1,19 @@
+[Unit]
+Description=VixEditor API Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/path/to/CatVideo
+Environment="PATH=/path/to/CatVideo/venv/bin"
+ExecStart=/path/to/CatVideo/venv/bin/python main.py
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/path/to/CatVideo/logs/vixeditor.log
+StandardError=append:/path/to/CatVideo/logs/vixeditor-error.log
+
+[Install]
+WantedBy=multi-user.target
