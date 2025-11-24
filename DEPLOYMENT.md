@@ -124,7 +124,7 @@ sudo ufw status
 
 ### 1. Go to Repository Settings
 
-Navigate to: `https://github.com/LakshanDS/Vix-Video-Editor/settings/hooks`
+Navigate to: `https://github.com/yourusername/yourrepo/settings/hooks`
 
 ### 2. Add Webhook
 
@@ -144,7 +144,7 @@ Click "Test" in GitHub or push a commit to trigger deployment.
 
 ### 1. Go to Repository Settings
 
-Navigate to: `https://gitlab.com/LakshanDS/Vix-Video-Editor/-/settings/hooks`
+Navigate to: `Settings > Webhooks`
 
 ### 2. Add Webhook
 
@@ -164,7 +164,7 @@ Click "Test" in GitLab or push a commit.
 ### Test Deployment Script Manually
 
 ```bash
-cd /path/to/Vix-Video-Editor
+cd /path/to/CatVideo
 ./deploy.sh
 ```
 
@@ -336,7 +336,7 @@ sudo journalctl -u vixeditor -n 50
 ## 📁 File Structure
 
 ```
-Vix-Video-Editor/
+CatVideo/
 ├── deploy.sh                    # Deployment script
 ├── deploy_webhook.py            # Webhook service
 ├── .env.deploy                  # Deployment config
