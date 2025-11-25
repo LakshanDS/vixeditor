@@ -207,13 +207,48 @@ def start_video_render(job_id: str, on_finish_callback: callable):
         if cap: cap.release(); cap = None
         
         audio_settings = request.get('audio', {})
+        
+        # Always use FFmpeg for final encoding to ensure H.264 codec and proper audio track
         if audio_settings.get('audio') != 'none' and any(settings.AUDIO_DIR.iterdir()):
+            # Add background music
             selected_audio_path = random.choice(list(settings.AUDIO_DIR.glob("**/*.*")))
-            command = ["ffmpeg", "-y", "-i", str(temp_video_path), "-i", str(selected_audio_path), "-c:v", "copy", "-c:a", "aac", "-map", "0:v:0", "-map", "1:a:0", "-shortest", str(output_path)]
+            logger.info(f"[{job_id}] Adding background audio and re-encoding with H.264.")
+            command = [
+                "ffmpeg", "-y",
+                "-i", str(temp_video_path),
+                "-i", str(selected_audio_path),
+                "-c:v", "libx264",  # Use H.264 codec
+                "-preset", "medium",  # Balance between speed and quality
+                "-crf", "23",  # Quality level (lower = better quality, 18-28 is good range)
+                "-c:a", "aac",
+                "-b:a", "128k",  # Audio bitrate
+                "-map", "0:v:0",
+                "-map", "1:a:0",
+                "-shortest",
+                "-movflags", "+faststart",  # Enable streaming
+                str(output_path)
+            ]
             subprocess.run(command, check=True, capture_output=True, text=True, encoding='utf-8')
             temp_video_path.unlink()
         else:
-            temp_video_path.rename(output_path)
+            # No background music - add silent audio track for compatibility
+            logger.info(f"[{job_id}] No background music. Adding silent audio track and re-encoding with H.264.")
+            command = [
+                "ffmpeg", "-y",
+                "-i", str(temp_video_path),
+                "-f", "lavfi",  # Use lavfi input
+                "-i", f"anullsrc=channel_layout=stereo:sample_rate=44100",  # Generate silent audio
+                "-c:v", "libx264",  # Use H.264 codec
+                "-preset", "medium",
+                "-crf", "23",
+                "-c:a", "aac",
+                "-b:a", "128k",
+                "-shortest",
+                "-movflags", "+faststart",
+                str(output_path)
+            ]
+            subprocess.run(command, check=True, capture_output=True, text=True, encoding='utf-8')
+            temp_video_path.unlink()
 
         job.status = "complete"; job.progress = 100; job.output_filename = output_filename
         db.commit()
